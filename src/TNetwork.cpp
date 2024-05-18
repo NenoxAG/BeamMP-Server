@@ -503,8 +503,9 @@ std::vector<uint8_t> TNetwork::TCPRcv(TClient& c) {
 void TNetwork::ClientKick(TClient& c, const std::string& R) {
     std::string preparedReason = R;
 
-    while (preparedReason.find("\n") != std::string::npos) {
-        preparedReason.replace(preparedReason.find("\n"), 2, "^p");
+    std::string::size_type findPos;
+    while (std::string::npos != (findPos = preparedReason.find("\n"))) {
+        preparedReason.replace(findPos, 2, "^p");
     }
 
     beammp_info("Client kicked: " + R);
