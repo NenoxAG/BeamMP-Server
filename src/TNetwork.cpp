@@ -501,8 +501,14 @@ std::vector<uint8_t> TNetwork::TCPRcv(TClient& c) {
 }
 
 void TNetwork::ClientKick(TClient& c, const std::string& R) {
+    std::string preparedReason = R;
+
+    while (preparedReason.find("\n") != std::string::npos) {
+        preparedReason.replace(preparedReason.find("\n"), 2, "^p");
+    }
+
     beammp_info("Client kicked: " + R);
-    if (!TCPSend(c, StringToVector("K" + R))) {
+    if (!TCPSend(c, StringToVector("K" + preparedReason))) {
         beammp_debugf("tried to kick player '{}' (id {}), but was already disconnected", c.GetName(), c.GetID());
     }
     c.Disconnect("Kicked");
